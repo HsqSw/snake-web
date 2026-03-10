@@ -31,13 +31,15 @@ function computeCurrentTickMs() {
 }
 
 function applyTickMs(nextTickMs) {
-  // Avoid interval churn if nothing changed.
-  if (tickMs === nextTickMs) return;
+  const tickChanged = tickMs !== nextTickMs;
   tickMs = nextTickMs;
+
+  // Always update HUD even if current tick is clamped (e.g. MIN_TICK),
+  // so base speed changes are reflected immediately.
   updateHud();
 
-  // If the loop is running, rebuild the interval so the change takes effect immediately.
-  if (started && !gameOver) startLoop();
+  // If the loop is running, rebuild the interval only when the tick actually changed.
+  if (tickChanged && started && !gameOver) startLoop();
 }
 
 function reset() {
