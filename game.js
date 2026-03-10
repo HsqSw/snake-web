@@ -14,6 +14,13 @@ const speedSliderValueEl = document.getElementById('speedSliderValue');
 const statusEl = document.getElementById('status');
 const restartBtn = document.getElementById('restartBtn');
 
+const leaderboardListEl = document.getElementById('leaderboardList');
+const leaderboardHintEl = document.getElementById('leaderboardHint');
+
+const LEADERBOARD_KEY = 'snake.leaderboard.v1';
+let leaderboardCache = [];
+let leaderboardAvailable = true;
+
 let snake;
 let direction;
 let queuedDirection;
@@ -25,6 +32,86 @@ let tickMs;
 let timer;
 let started;
 let gameOver;
+let gameOverRecorded;
+
+function safeParseLeaderboard(value) {
+  if (!value) return [];
+  const parsed = JSON.parse(value);
+  if (!Array.isArray(parsed)) return [];
+  return parsed
+    .filter((item) => item && typeof item.score === 'number' && typeof item.at === 'string')
+    .map((item) => ({ score: item.score, at: item.at }));
+}
+
+function loadLeaderboard() {
+  leaderboardAvailable = true;
+  try {
+    const testKey = '__snake_ls_test__';
+    localStorage.setItem(testKey, '1');
+    localStorage.removeItem(testKey);
+
+    leaderboardCache = safeParseLeaderboard(localStorage.getItem(LEADERBOARD_KEY));
+  } catch (e) {
+    leaderboardAvailable = false;
+    leaderboardCache = [];
+  }
+
+  renderLeaderboard();
+}
+
+function saveLeaderboard(next) {
+  leaderboardCache = next;
+  if (leaderboardAvailable) {
+    try {
+      localStorage.setItem(LEADERBOARD_KEY, JSON.stringify(next));
+    } catch (e) {
+      // If storage becomes unavailable, degrade gracefully for this session.
+      leaderboardAvailable = false;
+    }
+  }
+  renderLeaderboard();
+}
+
+function upsertScoreToLeaderboard(scoreValue) {
+  const record = { score: scoreValue, at: new Date().toISOString() };
+  const next = [...leaderboardCache, record]
+    // Sort: higher score first; tie-breaker: newer at first (larger ISO string).
+    .sort((a, b) => (b.score - a.score) || (b.at.localeCompare(a.at)))
+    .slice(0, 10);
+
+  saveLeaderboard(next);
+}
+
+function renderLeaderboard() {
+  if (!leaderboardListEl) return;
+
+  leaderboardListEl.innerHTML = '';
+
+  if (!leaderboardAvailable) {
+    leaderboardHintEl.textContent = 'Local storage unavailable; scores will not persist after refresh.';
+  } else if (leaderboardCache.length === 0) {
+    leaderboardHintEl.textContent = 'No records yet. Play a round!';
+  } else {
+    leaderboardHintEl.textContent = '';
+  }
+
+  leaderboardCache.forEach((entry) => {
+    const li = document.createElement('li');
+
+    const left = document.createElement('span');
+    left.textContent = `${entry.score}`;
+
+    const right = document.createElement('span');
+    right.className = 'muted';
+    // Show only date+time (YYYY-MM-DD HH:mm) for readability.
+    const d = new Date(entry.at);
+    const label = Number.isNaN(d.getTime()) ? entry.at : d.toISOString().slice(0, 16).replace('T', ' ');
+    right.textContent = label;
+
+    li.append(left, right);
+    leaderboardListEl.appendChild(li);
+  });
+}
 
 function computeCurrentTickMs() {
   return Math.max(MIN_TICK, baseTickMs - foodEatenCount * SPEED_STEP);
@@ -61,6 +148,7 @@ function reset() {
 
   started = false;
   gameOver = false;
+  gameOverRecorded = false;
   placeFood();
   updateHud();
   statusEl.textContent = 'Press any direction key to start.';
@@ -109,6 +197,13 @@ function step() {
   ) {
     gameOver = true;
     statusEl.textContent = 'Game Over. Press Restart or R.';
+
+    // Record the run exactly once per game.
+    if (!gameOverRecorded) {
+      gameOverRecorded = true;
+      upsertScoreToLeaderboard(score);
+    }
+
     draw();
     stopLoop();
     return;
@@ -170,4 +265,5 @@ speedSlider.addEventListener('input', () => {
 
 restartBtn.addEventListener('click', reset);
 
+loadLeaderboard();
 reset();

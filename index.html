@@ -22,6 +22,13 @@
         <span class="muted"><span id="speedSliderValue">150</span>ms</span>
       </div>
       <canvas id="game" width="400" height="400" aria-label="Snake game"></canvas>
+
+      <section class="leaderboard" aria-label="Local leaderboard">
+        <h2>Local Top 10</h2>
+        <ol id="leaderboardList" class="leaderboard-list"></ol>
+        <p id="leaderboardHint" class="muted leaderboard-hint"></p>
+      </section>
+
       <div class="controls">
         <button id="restartBtn" type="button">Restart (R)</button>
         <p>Controls: Arrow Keys / WASD</p>
