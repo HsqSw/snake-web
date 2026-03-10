@@ -8,6 +8,9 @@ const canvas = document.getElementById('game');
 const ctx = canvas.getContext('2d');
 const scoreEl = document.getElementById('score');
 const speedEl = document.getElementById('speed');
+const baseSpeedEl = document.getElementById('baseSpeed');
+const speedSlider = document.getElementById('speedSlider');
+const speedSliderValueEl = document.getElementById('speedSliderValue');
 const statusEl = document.getElementById('status');
 const restartBtn = document.getElementById('restartBtn');
 
@@ -16,10 +19,28 @@ let direction;
 let queuedDirection;
 let food;
 let score;
+let foodEatenCount;
+let baseTickMs;
 let tickMs;
 let timer;
 let started;
 let gameOver;
+
+function computeCurrentTickMs() {
+  return Math.max(MIN_TICK, baseTickMs - foodEatenCount * SPEED_STEP);
+}
+
+function applyTickMs(nextTickMs) {
+  const tickChanged = tickMs !== nextTickMs;
+  tickMs = nextTickMs;
+
+  // Always update HUD even if current tick is clamped (e.g. MIN_TICK),
+  // so base speed changes are reflected immediately.
+  updateHud();
+
+  // If the loop is running, rebuild the interval only when the tick actually changed.
+  if (tickChanged && started && !gameOver) startLoop();
+}
 
 function reset() {
   snake = [
@@ -30,7 +51,14 @@ function reset() {
   direction = { x: 1, y: 0 };
   queuedDirection = direction;
   score = 0;
-  tickMs = INITIAL_TICK;
+  foodEatenCount = 0;
+  baseTickMs = INITIAL_TICK;
+  tickMs = computeCurrentTickMs();
+
+  // UI defaults (no persistence).
+  speedSlider.value = String(baseTickMs);
+  speedSliderValueEl.textContent = baseTickMs;
+
   started = false;
   gameOver = false;
   placeFood();
@@ -52,6 +80,7 @@ function placeFood() {
 function updateHud() {
   scoreEl.textContent = score;
   speedEl.textContent = tickMs;
+  baseSpeedEl.textContent = baseTickMs;
 }
 
 function startLoop() {
@@ -89,10 +118,9 @@ function step() {
 
   if (next.x === food.x && next.y === food.y) {
     score += 1;
-    tickMs = Math.max(MIN_TICK, tickMs - SPEED_STEP);
-    updateHud();
+    foodEatenCount += 1;
+    applyTickMs(computeCurrentTickMs());
     placeFood();
-    startLoop();
   } else {
     snake.pop();
   }
@@ -132,6 +160,12 @@ document.addEventListener('keydown', (e) => {
   if (key === 'arrowleft' || key === 'a') setDirection(-1, 0);
   if (key === 'arrowright' || key === 'd') setDirection(1, 0);
   if (key === 'r') reset();
+});
+
+speedSlider.addEventListener('input', () => {
+  baseTickMs = Number(speedSlider.value);
+  speedSliderValueEl.textContent = baseTickMs;
+  applyTickMs(computeCurrentTickMs());
 });
 
 restartBtn.addEventListener('click', reset);

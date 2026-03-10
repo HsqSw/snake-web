@@ -9,7 +9,19 @@ body {
   place-items: center;
 }
 .app { text-align: center; }
-.hud { display: flex; gap: 16px; justify-content: center; margin-bottom: 8px; }
+.hud { display: flex; gap: 16px; justify-content: center; margin-bottom: 8px; flex-wrap: wrap; }
+.muted { color: #a7b4dd; font-weight: 500; }
+
+.speed-control {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  margin: 6px 0 10px;
+}
+.speed-control label { color: #a7b4dd; }
+.speed-control input[type="range"] { width: 220px; }
+
 canvas {
   border: 2px solid #2a3a66;
   background: #111934;
