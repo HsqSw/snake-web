@@ -27,6 +27,36 @@ canvas {
   background: #111934;
   image-rendering: pixelated;
 }
+
+.leaderboard {
+  margin: 12px auto 0;
+  width: 400px;
+  text-align: left;
+  border: 1px solid #2a3a66;
+  border-radius: 10px;
+  padding: 10px 12px;
+  background: rgba(17, 25, 52, 0.55);
+}
+.leaderboard h2 {
+  margin: 0 0 8px;
+  font-size: 14px;
+  color: #e6ecff;
+  font-weight: 700;
+}
+.leaderboard-list {
+  margin: 0;
+  padding-left: 22px;
+  display: grid;
+  gap: 4px;
+}
+.leaderboard-list li {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  font-variant-numeric: tabular-nums;
+}
+.leaderboard-hint { margin: 8px 0 0; }
+
 .controls { margin-top: 8px; }
 button {
   background: #4f7cff;
