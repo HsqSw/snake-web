@@ -29,8 +29,15 @@ Open `index.html` directly in a browser.
 4. While playing, drag the slider; confirm snake speed changes immediately (no restart needed).
 5. Eat food; score increments and speed decreases by 5ms each time until minimum 60ms.
 6. Refresh page; confirm slider resets back to 150ms (no persistence).
-7. Hit wall or self; game shows Game Over.
-8. Press `R` or Restart button; state resets (score 0, base 150ms, speed 150ms).
+7. Hit wall or self; game shows Game Over panel.
+8. Press `R` or Restart button; state resets (score 0, base 150ms, speed 150ms) and panel hides.
+
+### Share score (Copy text) (Issue #5)
+1. Play a round, then hit a wall/self to trigger Game Over.
+2. Confirm Game Over panel shows a Share text block (score + project URL).
+3. Click Copy.
+   - If Clipboard API works: show "Copied to clipboard."
+   - If Clipboard API fails/blocked: show a textarea with the share text selected + hint "Please manually copy".
 
 ### Local leaderboard Top10 (Issue #3)
 1. Start a game, eat a few foods, then hit a wall to trigger Game Over.

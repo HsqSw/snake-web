@@ -17,6 +17,14 @@ const restartBtn = document.getElementById('restartBtn');
 const leaderboardListEl = document.getElementById('leaderboardList');
 const leaderboardHintEl = document.getElementById('leaderboardHint');
 
+const gameOverPanelEl = document.getElementById('gameOverPanel');
+const shareTextEl = document.getElementById('shareText');
+const copyBtn = document.getElementById('copyBtn');
+const copyStatusEl = document.getElementById('copyStatus');
+const copyFallbackEl = document.getElementById('copyFallback');
+
+const PROJECT_HOME_URL = 'https://github.com/HsqSw/snake-web';
+
 const LEADERBOARD_KEY = 'snake.leaderboard.v1';
 let leaderboardCache = [];
 let leaderboardAvailable = true;
@@ -33,6 +41,7 @@ let timer;
 let started;
 let gameOver;
 let gameOverRecorded;
+let shareText;
 
 function safeParseLeaderboard(value) {
   if (!value) return [];
@@ -141,6 +150,7 @@ function reset() {
   foodEatenCount = 0;
   baseTickMs = INITIAL_TICK;
   tickMs = computeCurrentTickMs();
+  shareText = '';
 
   // UI defaults (no persistence).
   speedSlider.value = String(baseTickMs);
@@ -149,6 +159,14 @@ function reset() {
   started = false;
   gameOver = false;
   gameOverRecorded = false;
+
+  if (gameOverPanelEl) gameOverPanelEl.hidden = true;
+  if (copyStatusEl) copyStatusEl.textContent = '';
+  if (copyFallbackEl) {
+    copyFallbackEl.hidden = true;
+    copyFallbackEl.value = '';
+  }
+
   placeFood();
   updateHud();
   statusEl.textContent = 'Press any direction key to start.';
@@ -204,6 +222,8 @@ function step() {
       upsertScoreToLeaderboard(score);
     }
 
+    showGameOverPanel();
+
     draw();
     stopLoop();
     return;
@@ -236,6 +256,45 @@ function draw() {
   drawCell(food.x, food.y, '#ff5f8f');
 }
 
+function buildShareText() {
+  return `I scored ${score} in Snake Web!\n${PROJECT_HOME_URL}`;
+}
+
+function showGameOverPanel() {
+  if (!gameOverPanelEl) return;
+  shareText = buildShareText();
+  shareTextEl.textContent = shareText;
+  gameOverPanelEl.hidden = false;
+}
+
+async function copyShareText() {
+  if (!shareText) shareText = buildShareText();
+  const text = shareText;
+
+  if (copyStatusEl) copyStatusEl.textContent = '';
+  if (copyFallbackEl) {
+    copyFallbackEl.hidden = true;
+    copyFallbackEl.value = '';
+  }
+
+  try {
+    if (!navigator.clipboard || typeof navigator.clipboard.writeText !== 'function') {
+      throw new Error('Clipboard API unavailable');
+    }
+    await navigator.clipboard.writeText(text);
+    if (copyStatusEl) copyStatusEl.textContent = 'Copied to clipboard.';
+  } catch (e) {
+    // Fallback: show selectable textarea for manual copy.
+    if (copyFallbackEl) {
+      copyFallbackEl.hidden = false;
+      copyFallbackEl.value = text;
+      copyFallbackEl.focus();
+      copyFallbackEl.select();
+    }
+    if (copyStatusEl) copyStatusEl.textContent = 'Copy failed. Please manually copy the text below.';
+  }
+}
+
 function setDirection(nextX, nextY) {
   // Apply on next tick; block direct 180 turns
   if (direction.x === -nextX && direction.y === -nextY) return;
@@ -244,6 +303,7 @@ function setDirection(nextX, nextY) {
   if (!started && !gameOver) {
     started = true;
     statusEl.textContent = 'Playing...';
+    if (gameOverPanelEl) gameOverPanelEl.hidden = true;
     startLoop();
   }
 }
@@ -261,6 +321,10 @@ speedSlider.addEventListener('input', () => {
   baseTickMs = Number(speedSlider.value);
   speedSliderValueEl.textContent = baseTickMs;
   applyTickMs(computeCurrentTickMs());
+});
+
+copyBtn?.addEventListener('click', () => {
+  copyShareText();
 });
 
 restartBtn.addEventListener('click', reset);
