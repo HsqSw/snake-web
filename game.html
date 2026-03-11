@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Snake Web - Game</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <main class="app">
+      <div class="topbar">
+        <a class="link-btn" href="index.html">← Back to Home</a>
+      </div>
+
+      <h1>Snake</h1>
+
+      <div class="hud">
+        <span>Score: <strong id="score">0</strong></span>
+        <span>
+          Speed: <strong id="speed">150</strong>ms
+          <span class="muted">(Base: <strong id="baseSpeed">150</strong>ms)</span>
+        </span>
+      </div>
+
+      <div class="speed-control" aria-label="Speed control">
+        <label for="speedSlider">Base speed</label>
+        <input id="speedSlider" type="range" min="60" max="300" step="5" value="150" />
+        <span class="muted"><span id="speedSliderValue">150</span>ms</span>
+      </div>
+
+      <canvas id="game" width="400" height="400" aria-label="Snake game"></canvas>
+
+      <section class="leaderboard" aria-label="Local leaderboard">
+        <h2>Local Top 10</h2>
+        <ol id="leaderboardList" class="leaderboard-list"></ol>
+        <p id="leaderboardHint" class="muted leaderboard-hint"></p>
+      </section>
+
+      <div class="controls">
+        <button id="restartBtn" type="button">Restart (R)</button>
+        <p>Controls: Arrow Keys / WASD</p>
+      </div>
+      <p id="status" class="status">Press any direction key to start.</p>
+    </main>
+
+    <script src="game.js"></script>
+  </body>
+</html>
