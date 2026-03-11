@@ -1,47 +1,62 @@
-# Snake Web (docs-only drill deliverable)
+# Snake Web
 
-Minimal web Snake game using HTML + Canvas + JS.
+A minimal Snake game built with **pure static** HTML/CSS/JavaScript + Canvas.
 
-## Files
-- `index.html` (landing page)
-- `game.html` (game page)
-- `style.css`
-- `game.js`
+- `index.html`: landing page
+- `game.html`: game page
 
-## Run
-Open `index.html` directly in a browser.
-- Click **Start Game** to enter `game.html`
+## Local run (http server only)
+This project uses native **ES modules** (`import/export`). Many browsers restrict ESM under `file://`.
 
-## Rules (Plan v2 mapping)
+We **only guarantee running via a local static HTTP server (http://)**.
+
+Run one of these commands from the repo root:
+
+### Option A: Python (recommended)
+```bash
+python -m http.server 5173
+# or
+python3 -m http.server 5173
+```
+
+### Option B: Node (no dependencies)
+```bash
+node -e "require('http').createServer((req,res)=>{const fs=require('fs');const path=require('path');const u=decodeURIComponent((req.url||'/').split('?')[0]);const p=u==='/'?'/index.html':u;const f=path.join(process.cwd(),p);fs.createReadStream(f).on('error',()=>{res.statusCode=404;res.end('Not found');}).pipe(res);}).listen(5173); console.log('http://127.0.0.1:5173')"
+```
+
+Then open (Chrome verified):
+- http://127.0.0.1:5173/index.html
+
+## Gameplay
+- Move: Arrow keys / WASD
+- Restart (in-game): `R` or the Restart button
+
+## Rules
 - Grid: 20x20
 - No wall wrap (hit wall = game over)
 - Default base tick: 150ms (slider)
 - Manual speed control: slider sets **base tick (ms)**, range 60–300ms, step 5ms
-- Speed-up: each food eaten reduces tick by 5ms, floor 60ms
-- Input applies on next tick
-- Food never spawns on snake body
+- Auto speed-up: each food reduces tick by 5ms, floor 60ms
+- Direction input applies on the **next tick**
+- Food never spawns on the snake body
 
-## Manual validation steps (QA)
-### Speed slider (Issue #1)
-1. Open `index.html`; game shows score, current speed (ms), and base speed (ms).
-2. Before starting, drag the base speed slider; confirm displayed base speed changes and current speed matches it.
-3. Press Arrow/WASD; snake starts moving.
-4. While playing, drag the slider; confirm snake speed changes immediately (no restart needed).
-5. Eat food; score increments and speed decreases by 5ms each time until minimum 60ms.
-6. Refresh page; confirm slider resets back to 150ms (no persistence).
-7. Hit wall or self; game shows Game Over panel.
-8. Press `R` or Restart button; state resets (score 0, base 150ms, speed 150ms) and panel hides.
+## Project structure
+- `index.html` / `game.html`: entry pages (paths are invariant)
+- `style.css`: styles
+- `src/`: ESM source code
+  - `src/main.js`: bootstrap + orchestration
+  - `src/game/`: gameplay logic
+  - `src/ui/`: DOM + rendering
+  - `src/utils/`: tiny helpers
+  - `src/loop/`: tick loop helper
+- `docs/AGENT.md`: agent-readable architecture notes
 
-### Share score (Copy text) (Issue #5)
-1. Play a round, then hit a wall/self to trigger Game Over.
-2. Confirm Game Over panel shows a Share text block (score + project URL).
-3. Click Copy.
-   - If Clipboard API works: show "Copied to clipboard."
-   - If Clipboard API fails/blocked: show a textarea with the share text selected + hint "Please manually copy".
-
-### Local leaderboard Top10 (Issue #3)
-1. Start a game, eat a few foods, then hit a wall to trigger Game Over.
-2. Confirm the score is appended into **Local Top 10** list.
-3. Refresh page; confirm the leaderboard still shows prior records (localStorage persistence).
-4. Produce >10 records (11 game-overs); confirm list keeps **only 10 entries**.
-5. Tie-breaker: when two records have the same score, confirm the **newer record is shown earlier** (at desc).
+## Regression verification checklist (QA)
+- [ ] Open `index.html` (via http server) shows landing page; click "Start Game" enters `game.html`.
+- [ ] Direction input is applied on **next tick**.
+- [ ] Rapid consecutive inputs behave correctly (no illegal 180° reversal; queued input behavior unchanged).
+- [ ] Eat food: score increments; snake length increases.
+- [ ] Auto speed-up: tick interval decreases by **-5ms per food**, with floor **60ms**.
+- [ ] Hit wall => Game Over.
+- [ ] Hit self => Game Over.
+- [ ] Restart button / press `R` resets: snake position/body, direction, score, food, and speed state back to initial values.
