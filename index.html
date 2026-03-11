@@ -33,6 +33,25 @@
         <button id="restartBtn" type="button">Restart (R)</button>
         <p>Controls: Arrow Keys / WASD</p>
       </div>
+
+      <section id="gameOverPanel" class="panel" aria-label="Game over panel" hidden>
+        <h2>Game Over</h2>
+        <p class="muted">Share your score:</p>
+        <pre id="shareText" class="share-text" aria-label="Share text"></pre>
+        <div class="panel-actions">
+          <button id="copyBtn" type="button">Copy</button>
+        </div>
+        <p id="copyStatus" class="muted" role="status" aria-live="polite"></p>
+        <textarea
+          id="copyFallback"
+          class="copy-fallback"
+          rows="3"
+          readonly
+          hidden
+          aria-label="Copy fallback text"
+        ></textarea>
+      </section>
+
       <p id="status" class="status">Press any direction key to start.</p>
     </main>
     <script src="game.js"></script>
