@@ -3,12 +3,14 @@
 Minimal web Snake game using HTML + Canvas + JS.
 
 ## Files
-- `index.html`
+- `index.html` (landing page)
+- `game.html` (game page)
 - `style.css`
 - `game.js`
 
 ## Run
 Open `index.html` directly in a browser.
+- Click **Start Game** to enter `game.html`
 
 ## Rules (Plan v2 mapping)
 - Grid: 20x20
