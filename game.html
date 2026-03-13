@@ -7,59 +7,74 @@
     <link rel="stylesheet" href="style.css" />
   </head>
   <body>
-    <main class="app">
+    <main class="app app-game">
       <div class="topbar">
-        <a class="link-btn" href="index.html">← Back to Home</a>
+        <a class="link-btn" href="index.html">Back to Home</a>
       </div>
 
-      <h1>Snake</h1>
+      <section class="game-shell">
+        <header class="game-header card">
+          <div>
+            <p class="eyebrow">Playable Demo</p>
+            <h1>Snake</h1>
+          </div>
 
-      <div class="hud">
-        <span>Score: <strong id="score">0</strong></span>
-        <span>
-          Speed: <strong id="speed">150</strong>ms
-          <span class="muted">(Base: <strong id="baseSpeed">150</strong>ms)</span>
-        </span>
-      </div>
+          <div class="hud" aria-label="Game stats">
+            <p class="stat-chip">Score <strong id="score">0</strong></p>
+            <p class="stat-chip">
+              Speed <strong id="speed">150</strong>ms
+              <span class="muted">Base <strong id="baseSpeed">150</strong>ms</span>
+            </p>
+          </div>
+        </header>
 
-      <div class="speed-control" aria-label="Speed control">
-        <label for="speedSlider">Base speed</label>
-        <input id="speedSlider" type="range" min="60" max="300" step="5" value="150" />
-        <span class="muted"><span id="speedSliderValue">150</span>ms</span>
-      </div>
+        <div class="game-grid">
+          <section class="card game-stage" aria-label="Game board area">
+            <div class="speed-control" aria-label="Speed control">
+              <label for="speedSlider">Base speed</label>
+              <input id="speedSlider" type="range" min="60" max="300" step="5" value="150" />
+              <span class="muted"><span id="speedSliderValue">150</span>ms</span>
+            </div>
 
-      <canvas id="game" width="400" height="400" aria-label="Snake game"></canvas>
+            <div class="canvas-frame">
+              <canvas id="game" width="400" height="400" aria-label="Snake game"></canvas>
+            </div>
 
-      <section class="leaderboard" aria-label="Local leaderboard">
-        <h2>Local Top 10</h2>
-        <ol id="leaderboardList" class="leaderboard-list"></ol>
-        <p id="leaderboardHint" class="muted leaderboard-hint"></p>
-      </section>
+            <div class="controls">
+              <button id="restartBtn" type="button">Restart (R)</button>
+              <p>Controls: Arrow Keys / WASD</p>
+            </div>
 
-      <div class="controls">
-        <button id="restartBtn" type="button">Restart (R)</button>
-        <p>Controls: Arrow Keys / WASD</p>
-      </div>
+            <p id="status" class="status">Press any direction key to start.</p>
+          </section>
 
-      <section id="gameOverPanel" class="panel" aria-label="Game over panel" hidden>
-        <h2>Game Over</h2>
-        <p class="muted">Share your score:</p>
-        <pre id="shareText" class="share-text" aria-label="Share text"></pre>
-        <div class="panel-actions">
-          <button id="copyBtn" type="button">Copy</button>
+          <aside class="game-sidebar">
+            <section class="leaderboard card" aria-label="Local leaderboard">
+              <h2>Local Top 10</h2>
+              <ol id="leaderboardList" class="leaderboard-list"></ol>
+              <p id="leaderboardHint" class="muted leaderboard-hint"></p>
+            </section>
+
+            <section id="gameOverPanel" class="panel card" aria-label="Game over panel" hidden>
+              <h2>Game Over</h2>
+              <p class="muted">Share your score:</p>
+              <pre id="shareText" class="share-text" aria-label="Share text"></pre>
+              <div class="panel-actions">
+                <button id="copyBtn" type="button">Copy</button>
+              </div>
+              <p id="copyStatus" class="muted" role="status" aria-live="polite"></p>
+              <textarea
+                id="copyFallback"
+                class="copy-fallback"
+                rows="3"
+                readonly
+                hidden
+                aria-label="Copy fallback text"
+              ></textarea>
+            </section>
+          </aside>
         </div>
-        <p id="copyStatus" class="muted" role="status" aria-live="polite"></p>
-        <textarea
-          id="copyFallback"
-          class="copy-fallback"
-          rows="3"
-          readonly
-          hidden
-          aria-label="Copy fallback text"
-        ></textarea>
       </section>
-
-      <p id="status" class="status">Press any direction key to start.</p>
     </main>
 
     <script type="module" src="src/main.js"></script>

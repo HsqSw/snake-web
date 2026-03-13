@@ -8,29 +8,47 @@
   </head>
   <body>
     <main class="app app-home">
-      <h1>Snake Web</h1>
-
-      <section class="card" aria-label="Game introduction">
-        <h2>How to play</h2>
-        <ul class="list">
-          <li>Eat food to grow and score points.</li>
-          <li>Avoid walls and your own body.</li>
-          <li>Each food speeds up the game (down to 60ms).</li>
-        </ul>
-
-        <h2>Controls</h2>
-        <ul class="list">
-          <li>Move: Arrow Keys / WASD</li>
-          <li>Restart (in game): R</li>
-        </ul>
+      <section class="hero card card-hero" aria-labelledby="home-title">
+        <p class="eyebrow">Arcade Canvas Game</p>
+        <h1 id="home-title">Snake Web</h1>
+        <p class="hero-copy">
+          A clean browser remake of Snake with responsive controls, adjustable base speed,
+          and a local Top 10 leaderboard.
+        </p>
 
         <div class="home-actions">
           <a class="primary-btn" href="game.html">Start Game</a>
-          <a class="link-btn" href="https://github.com/HsqSw/snake-web" target="_blank" rel="noreferrer">GitHub</a>
+          <a class="link-btn" href="https://github.com/HsqSw/snake-web" target="_blank" rel="noreferrer">View GitHub</a>
+        </div>
+
+        <div class="home-stats" aria-label="Game highlights">
+          <p><strong>20x20</strong><span>Grid layout</span></p>
+          <p><strong>60-300ms</strong><span>Speed range</span></p>
+          <p><strong>Local Top 10</strong><span>Persistent scores</span></p>
         </div>
       </section>
 
-      <p class="muted">No parameters; always starts from this landing page.</p>
+      <section class="home-grid" aria-label="Game introduction">
+        <article class="card">
+          <h2>How to play</h2>
+          <ul class="list">
+            <li>Eat food to grow and score points.</li>
+            <li>Avoid walls and your own body.</li>
+            <li>Each food speeds up the game down to 60ms.</li>
+          </ul>
+        </article>
+
+        <article class="card">
+          <h2>Controls</h2>
+          <ul class="list">
+            <li>Move with Arrow Keys or WASD.</li>
+            <li>Press R during the game to restart instantly.</li>
+            <li>Use the speed slider to set the base pace before or during play.</li>
+          </ul>
+        </article>
+      </section>
+
+      <p class="muted home-note">No parameters; always starts from this landing page.</p>
     </main>
   </body>
 </html>
