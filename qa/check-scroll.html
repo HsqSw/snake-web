@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Scroll Check</title>
+    <style>
+      body {
+        margin: 0;
+        font-family: sans-serif;
+        background: #0b1020;
+        color: #e6ecff;
+      }
+
+      #frame {
+        width: 100vw;
+        height: 100vh;
+        border: 0;
+      }
+
+      #result {
+        position: fixed;
+        left: 8px;
+        top: 8px;
+        z-index: 10;
+        padding: 8px 10px;
+        border-radius: 8px;
+        background: rgba(0, 0, 0, 0.7);
+      }
+    </style>
+  </head>
+  <body>
+    <div id="result" role="status" aria-live="polite">Checking…</div>
+    <iframe id="frame" title="Page under test"></iframe>
+    <script>
+      const params = new URLSearchParams(window.location.search);
+      const page = params.get('page') || 'index.html';
+      const frame = document.getElementById('frame');
+      const result = document.getElementById('result');
+
+      frame.src = `/${page}`;
+      frame.addEventListener('load', () => {
+        const docEl = frame.contentDocument.documentElement;
+        const viewportWidth = frame.clientWidth;
+        const scrollWidth = docEl.scrollWidth;
+        const pass = scrollWidth <= viewportWidth;
+        result.textContent = JSON.stringify({
+          page,
+          viewportWidth,
+          scrollWidth,
+          pass,
+        });
+      });
+    </script>
+  </body>
+</html>
